@@ -1,0 +1,36 @@
+version: '3'
+services:
+  subscription-backend:
+    image: gonzalotp/subscription-backend:0.0.1
+    expose:
+      - "9999"
+    environment:
+      - KAFKA_ENABLED=true
+      - KAFKA_BOOTSTRAP_SERVERS=broker:29092
+      - KAFKA_TOPIC=email_notifications
+    networks:
+      - cp-all-in-one_default
+  subscription-email:
+    image: gonzalotp/subscription-email:0.0.1
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=broker:29092
+      - KAFKA_TOPIC=email_notifications
+      - KAFKA_DLQ_ENABLED=true
+      - KAFKA_DLQ_TOPIC=email_dlq
+      - SMTP_SERVER=outlook.office365.com
+      - SMTP_USER=my_svc_user
+      - SMTP_PASSWORD=secret
+    networks:
+      - cp-all-in-one_default
+  subscription-gateway:
+    image: gonzalotp/subscription-gateway:0.0.1
+    ports:
+      - "9998:9998"
+    environment:
+      - SUBSCRIPTION_SERVICE_URL=http://subscription-backend:9999/
+    networks:
+      - cp-all-in-one_default
+
+networks:
+  cp-all-in-one_default:
+    name: cp-all-in-one_default
