@@ -116,10 +116,11 @@ By default and for simplicity, the topics are created automatically when using t
 3) The base URL for the subscription resources is *localhost:9998/subscriptions*
 
 #### Without Kafka
-1) Set the KAFKA_ENABLED=true variable to false in *docker-compose.yml* in the *subscription-backend* container.
+1) Set the KAFKA_ENABLED=true variable to false in [*docker-compose.yml*](docker-compose.yml) for the 
+*subscription-backend* container.
 
 2) Run *sudo docker-compose up -d* in this repository. The email service will not be able to consume anything, but
-it will be possible to create subscriptions.
+it will be possible to manage subscriptions.
 
 3) The base URL for the subscription resources is *localhost:9998/subscriptions*
 
