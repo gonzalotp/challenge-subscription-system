@@ -30,8 +30,8 @@ This component reads pending notification messages from a Kafka topic and sends 
 creation/cancellation.
 
 As it is not guaranteed to give a response in an acceptable time, 
-the Kafka topic that serves as notification queue provides fault-tolerancy 
-not blocking the Backend until the whole email sending process is done.
+the Kafka topic that serves as notification queue provides fault-tolerancy, 
+without blocking the Backend until the whole email sending process is done.
 
 Wrong messages can be sent to a Dead Letter Queue topic for more fault-tolerancy and analysis.
 
@@ -42,7 +42,8 @@ It also allows to implement custom filters if the system needed them.
 If new microservices that required authentication were included in the system (for example, employees only), 
 it would be possible to configure SAML authentication with Spring Security.
 
-The routing configuration required for the challenge is in the application.yml file.
+The routing configuration required for the challenge is in the 
+[application.yml](subscription-gateway/src/main/resources/application.yml) file.
 
 #### Subscription backend
 Exposes an API using Spring @RestController and persists the changes in the database abstracted by a JpaRepository and 
@@ -70,18 +71,19 @@ and access control lists.
 
 # Bonuses
 #### CI/CD
-A Jenkins CI/CD pipeline stub is included for all components. The steps are:
+A [Jenkins CI/CD pipeline stub](subscription-backend/Jenkinsfile) is included for all components. The steps are:
 
 1) Build, test, and analyze the code (i.e. with Sonar scanner)
 2) For the main branch (when a PR is merged), build a new Docker image and push it to the registry (Harbor).
 3) Deploy the new version on Kubernetes using the component's Helm chart
 
 #### Kubernetes files
-Each component has a ./kubernetes folder in the repo containing the templates for its Deployment, Service, 
-and Ingress (in the case of the Gateway).
+Each component has a [./kubernetes](subscription-backend/kubernetes) folder in the repo containing the templates 
+for its Deployment, Service, and Ingress (in the case of the Gateway).
 
 The environment variables in the template would be filled when applying the Helm chart (template syntax is simplified
-for the challenge), using the values.yml files under the ./config folder for each environment.
+for the challenge), using the values.yml files under the [./config](subscription-backend/config) folder 
+for each environment.
 
 The internal microservices that expose endpoints use a Service to expose them internally in the cluster,
 making them available only from the Gateway and not for the outside.
@@ -90,13 +92,15 @@ The Gateway uses an Ingress that is associated with its Service, exposing it to 
 and securing the data in transit using HTTPS with a TLS certificate stored in a secret.
 
 As the Gateway and Backend are critical, it would be a good practice to deploy multiple replicas or a 
-Horizontal Pod Autoscaler for high availability. 
+[Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) for high 
+availability. 
 
 # How to build locally
 Each component folder has a [*docker_build.sh*](subscription-backend/docker_build.sh) file that can be executed 
 to build the Jar with Maven and build a Docker image with it using the Dockerfile in the same folder.
 
-If you run into any issue, the images are available publicly on Docker Hub (gonzalotp)
+If you run into any issue, the images are available publicly on Docker Hub 
+([gonzalotp](https://hub.docker.com/u/gonzalotp))
 
 # How to run locally
 #### With Kafka
