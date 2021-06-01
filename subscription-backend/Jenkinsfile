@@ -1,0 +1,39 @@
+#!groovy
+
+def DEFAULT_BRANCH = 'master'
+def DEPLOY_ENV = 'dev-cluster'
+def COMPONENT_NAME = 'subscription-backend'
+def DOCKER_REGISTRY = 'harbor.example.com'
+
+node ('build&&java') {
+    stage ('Prepare') {
+        cleanWs()
+        checkout scm
+    }
+
+    stage ('Build and analyze') {
+        sh 'mvn clean package sonar'
+    }
+
+    if (GIT_BRANCH == DEFAULT_BRANCH) {
+        stage ('Build and push docker') {
+            def imageTag = "${DOCKER_REGISTRY}/${COMPONENT_NAME}" + myJenkinsLibrary.getVersionFromMaven()
+            docker.withRegistry("https://${DOCKER_REGISTRY}", "harbor_secret") {
+                def myImage = docker.build(imageTag)
+                myImage.push()
+            }
+        }
+
+        stage ('Get Helm') {
+            dir ('bin') {
+                sh 'wget https://helm-url.com/download'
+            }
+        }
+
+        stage ('Deploy') {
+            withCredentials([file(credentialsId: "kube-${DEPLOY_ENV}", variable: 'KUBECONFIG'),]) {
+                sh "./bin/helm upgrade -i ${COMPONENT_NAME} ./kubernetes --kube-context=${DEPLOY_ENV} --values ./config/${DEPLOY_ENV}/values.yml"
+            }
+        }
+    }
+}

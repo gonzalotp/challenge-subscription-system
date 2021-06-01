@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscription-email
+  labels:
+    app: subscription-email
+    component_type: consumer
+spec:
+  replicas: 1
+  minReadySeconds: 60
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: subscription-email
+      component_type: consumer
+  template:
+    metadata:
+      labels:
+        app: subscription-email
+        component_type: consumer
+    spec:
+      containers:
+        - name: subscription-email
+          image: harbor.example.com/subscription-email:$VERSION
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: $REQUESTS_CPU
+              memory: $REQUESTS_MEMORY
+            limits:
+              cpu: $LIMITS_CPU
+              memory: $LIMITS_MEMORY
+          volumeMounts:
+            - name: kafka-certificate-volume
+              mountPath: /opt/secrets/kafka
+              readOnly: true
+          env:
+            - name: JAVA_OPTS
+              value: $JAVA_OPTS
+            - name: MY_SECRET_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: credentials-for-something-else
+                  key: password
+            - name: KAFKA_TOPIC
+              value: $KAFKA_TOPIC
+            - name: KAFKA_DLQ_ENABLED
+              value: $KAFKA_DLQ_ENABLED
+            - name: KAFKA_DLQ_TOPIC
+              value: $KAFKA_DLQ_TOPIC
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: $KAFKA_BOOTSTRAP_SERVERS
+            - name: SMTP_SERVER
+              value: $SMTP_SERVER
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: email-credentials
+                  key: username
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: email-credentials
+                  key: password
+      volumes:
+        - name: kafka-certificate-volume
+          secret:
+            secretName: secret-containing-certificate
+      imagePullSecrets:
+        - name: harbor-credentials

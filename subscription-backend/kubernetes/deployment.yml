@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscription-backend
+  labels:
+    app: subscription-backend
+    component_type: backend
+spec:
+  replicas: 1
+  minReadySeconds: 60
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: subscription-backend
+      component_type: backend
+  template:
+    metadata:
+      labels:
+        app: subscription-backend
+        component_type: backend
+    spec:
+      containers:
+        - name: subscription-backend
+          image: harbor.example.com/subscription-backend:$VERSION
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: $REQUESTS_CPU
+              memory: $REQUESTS_MEMORY
+            limits:
+              cpu: $LIMITS_CPU
+              memory: $LIMITS_MEMORY
+          volumeMounts:
+            - name: kafka-certificate-volume
+              mountPath: /opt/secrets/kafka
+              readOnly: true
+          env:
+            - name: JAVA_OPTS
+              value: $JAVA_OPTS
+            - name: MY_SECRET_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: credentials-for-something-else
+                  key: password
+            - name: KAFKA_ENABLED
+              value: $KAFKA_ENABLED
+            - name: KAFKA_TOPIC
+              value: $KAFKA_TOPIC
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: $KAFKA_BOOTSTRAP_SERVERS
+      volumes:
+        - name: kafka-certificate-volume
+          secret:
+            secretName: secret-containing-certificate
+      imagePullSecrets:
+        - name: harbor-credentials

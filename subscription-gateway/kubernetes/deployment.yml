@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscription-gateway
+  labels:
+    app: subscription-gateway
+    component_type: gateway
+spec:
+  replicas: 1
+  minReadySeconds: 60
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: subscription-gateway
+      component_type: gateway
+  template:
+    metadata:
+      labels:
+        app: subscription-gateway
+        component_type: gateway
+    spec:
+      containers:
+        - name: subscription-gateway
+          image: harbor.example.com/subscription-gateway:$VERSION
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: $REQUESTS_CPU
+              memory: $REQUESTS_MEMORY
+            limits:
+              cpu: $LIMITS_CPU
+              memory: $LIMITS_MEMORY
+          env:
+            - name: JAVA_OPTS
+              value: $JAVA_OPTS
+            - name: SUBSCRIPTION_SERVICE_URL
+              value: http://subscription-backend:9999/
+      imagePullSecrets:
+        - name: harbor-credentials

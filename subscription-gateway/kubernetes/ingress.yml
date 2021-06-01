@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: subscription-gateway-ingress
+spec:
+  rules:
+    - host: $GATEWAY_URL
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: subscription-gateway
+              servicePort: 9998
+  tls:
+    - hosts:
+        - $GATEWAY_URL
+      secretName: certificate-secret-for-https

@@ -1,0 +1,15 @@
+server:
+  port: 9999
+  error.include-message: always
+
+spring:
+  kafka:
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    bootstrap-servers: localhost:9092
+
+kafkaNotifications:
+  enabled: false
+  outputTopic: email_notifications

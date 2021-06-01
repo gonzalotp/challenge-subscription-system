@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: subscription-backend
+    component_type: backend
+  name: subscription-backend
+spec:
+  ports:
+    - port: 9999
+      protocol: TCP
+      targetPort: 9999
+      name: subscription-backend-service-port
+  selector:
+    app: subscription-backend

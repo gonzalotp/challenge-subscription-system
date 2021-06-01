@@ -1,0 +1,1 @@
+mvn clean package && sudo docker build --rm=true --tag=gonzalotp/subscription-email:0.0.1 .

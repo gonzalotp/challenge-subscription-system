@@ -1,0 +1,16 @@
+server:
+  port: 9998
+
+serviceUrls:
+  subscription: http://localhost:9999/
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: subscription
+          uri: ${serviceUrls.subscription}
+          predicates:
+            - Path=/subscriptions/**
+          filters:
+            - RewritePath=/subscriptions/documentation/(?<path>.*), /documentation/$\{path}

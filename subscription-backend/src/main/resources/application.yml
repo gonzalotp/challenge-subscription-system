@@ -1,0 +1,21 @@
+server:
+  port: 9999
+  error.include-message: always
+
+spring:
+  kafka:
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+kafkaNotifications:
+  enabled: ${KAFKA_ENABLED}
+  outputTopic: ${KAFKA_TOPIC}
+
+springfox:
+  documentation:
+    openapi.v3.path: /documentation/openapi
+    swagger.v2.path: /documentation/swagger
+    swagger-ui.baseUrl: /documentation

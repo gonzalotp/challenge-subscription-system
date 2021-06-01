@@ -1,0 +1,22 @@
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+    consumer:
+      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
+      group-id: subscription-email-service
+      properties:
+        spring.json.value.default.type: com.adidas.challenge.emailservice.model.Notification
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+
+email:
+  inputTopic: ${KAFKA_TOPIC}
+  dlq:
+    enabled: ${KAFKA_DLQ_ENABLED}
+    outputTopic: ${KAFKA_DLQ_TOPIC}
+  smtp:
+    server: ${SMTP_SERVER}
+    user: ${SMTP_USER}
+    password: ${SMTP_PASSWORD}
