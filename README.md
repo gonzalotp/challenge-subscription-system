@@ -6,7 +6,7 @@ A subscription Rest API is provided, where the frontend can make calls in order 
 status of a subscription, or cancel it.
 
 # Solution overview
-A high level architecture diagram is available in *diagram.png*.
+A high level architecture diagram is available in [*diagram.png*](diagram.png).
 Each component is designed to follow a single responsibility approach.
 
 #### Gateway (public service)
@@ -93,14 +93,14 @@ As the Gateway and Backend are critical, it would be a good practice to deploy m
 Horizontal Pod Autoscaler for high availability. 
 
 # How to build locally
-Each component folder has a *docker_build.sh* file that can be executed to build the Jar with Maven and 
-build a Docker image with it using the Dockerfile in the same folder.
+Each component folder has a [*docker_build.sh*](subscription-backend/docker_build.sh) file that can be executed 
+to build the Jar with Maven and build a Docker image with it using the Dockerfile in the same folder.
 
 If you run into any issue, the images are available publicly on Docker Hub (gonzalotp)
 
 # How to run locally
 #### With Kafka
-1) Use Confluent's cp-all-in-one docker-compose (https://github.com/confluentinc/cp-all-in-one).
+1) Use [Confluent's cp-all-in-one docker-compose](https://github.com/confluentinc/cp-all-in-one).
 This has been tested with version 6.0.0.
 Clone the repo and use *sudo docker-compose up -d* in the *cp-all-in-one* folder to run all their containers.
 You will know that they are ready visiting *localhost:9021*, where the Control Centre is exposed.
